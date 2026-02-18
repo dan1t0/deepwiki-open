@@ -1,35 +1,3 @@
-# DeepWiki-Open (Fork)
-
-## 🔄 Changes in this Fork
-
-This fork contains the following modifications from the original repository ([see original README](./README_original.md)):
-
-### Application Port
-- **Next.js Frontend**: Changed from `3000` to `3003` to avoid common conflicts
-
-### Local Data Directory
-- **MyRepos/**: New directory to store data locally within the project
-  - `MyRepos/repos/` - Cloned repositories
-  - `MyRepos/databases/` - Embeddings and indexes
-  - `MyRepos/wikicache/` - Cached wiki content
-- Actual data files are ignored via `.gitignore` (only empty folders with `.gitkeep` are tracked)
-
-### Google AI Embeddings Updated
-- **SDK**: Migrated from `google-generativeai` to the new `google-genai` SDK
-- **Default Model**: Updated from `text-embedding-004` to `gemini-embedding-001`
-- New dependency: `google-genai >= 1.0.0`
-
-### Ollama Configuration
-- **Embeddings Model**: Changed from `nomic-embed-text` to `bge-m3:latest`
-- Added `batch_size: 100` for better performance
-
-### Docker
-- Memory limits increased: 6GB → 12GB (max), 2GB → 4GB (reserved)
-- Volume changed from `~/.adalflow` to `./MyRepos`
-
----
-
-![DeepWiki Banner](screenshots/Deepwiki.png)
 
 ### ⚠️ Announcement: Shifting focus to AsyncReview
 ---
@@ -38,6 +6,10 @@ This fork contains the following modifications from the original repository ([se
 
 ---
 ---
+
+# DeepWiki-Open
+
+![DeepWiki Banner](screenshots/Deepwiki.png)
 
 **DeepWiki** is my own implementation attempt of DeepWiki, automatically creates beautiful, interactive wikis for any GitHub, GitLab, or BitBucket repository! Just enter a repo name, and DeepWiki will:
 
@@ -145,7 +117,7 @@ yarn dev
 
 #### Step 4: Use DeepWiki!
 
-1. Open [http://localhost:3003](http://localhost:3003) in your browser
+1. Open [http://localhost:3000](http://localhost:3000) in your browser
 2. Enter a GitHub, GitLab, or Bitbucket repository (like `https://github.com/openai/codex`, `https://github.com/microsoft/autogen`, `https://gitlab.com/gitlab-org/gitlab`, or `https://bitbucket.org/redradish/atlassian_app_versions`)
 3. For private repositories, click "+ Add access tokens" and enter your GitHub or GitLab personal access token
 4. Click "Generate Wiki" and watch the magic happen!
@@ -204,11 +176,6 @@ graph TD
 
 ```
 deepwiki/
-├── MyRepos/              # Directorio de datos local
-│   ├── databases/        # Embeddings e índices (ignorado en git)
-│   ├── repos/            # Repositorios clonados (ignorado en git)
-│   └── wikicache/        # Cache de wikis (ignorado en git)
-│
 ├── api/                  # Backend API server
 │   ├── main.py           # API entry point
 │   ├── api.py            # FastAPI implementation
@@ -323,7 +290,7 @@ DeepWiki now supports Google AI's latest embedding models as an alternative to O
 
 ### Features
 
-- **Latest Model**: Uses Google's `gemini-embedding-001` model
+- **Latest Model**: Uses Google's `text-embedding-004` model
 - **Same API Key**: Uses your existing `GOOGLE_API_KEY` (no additional setup required)
 - **Better Integration**: Optimized for use with Google Gemini text generation models
 - **Task-Specific**: Supports semantic similarity, retrieval, and classification tasks
@@ -346,10 +313,10 @@ DEEPWIKI_EMBEDDER_TYPE=google
 **Option 2: Docker Environment**
 
 ```bash
-docker run -p 8001:8001 -p 3003:3003 \
+docker run -p 8001:8001 -p 3000:3000 \
   -e GOOGLE_API_KEY=your_google_api_key \
   -e DEEPWIKI_EMBEDDER_TYPE=google \
-  -v ./MyRepos:/root/.adalflow \
+  -v ~/.adalflow:/root/.adalflow \
   ghcr.io/asyncfuncai/deepwiki-open:latest
 ```
 
@@ -373,7 +340,7 @@ docker-compose up
 | Type | Description | API Key Required | Notes |
 |------|-------------|------------------|-------|
 | `openai` | OpenAI embeddings (default) | `OPENAI_API_KEY` | Uses `text-embedding-3-small` model |
-| `google` | Google AI embeddings | `GOOGLE_API_KEY` | Uses `gemini-embedding-001` model |
+| `google` | Google AI embeddings | `GOOGLE_API_KEY` | Uses `text-embedding-004` model |
 | `ollama` | Local Ollama embeddings | None | Requires local Ollama installation |
 
 ### Why Use Google AI Embeddings?
@@ -491,7 +458,7 @@ You can use Docker to run DeepWiki:
 docker pull ghcr.io/asyncfuncai/deepwiki-open:latest
 
 # Run the container with environment variables
-docker run -p 8001:8001 -p 3003:3003 \
+docker run -p 8001:8001 -p 3000:3000 \
   -e GOOGLE_API_KEY=your_google_api_key \
   -e OPENAI_API_KEY=your_openai_api_key \
   -e OPENROUTER_API_KEY=your_openrouter_api_key \
@@ -500,14 +467,14 @@ docker run -p 8001:8001 -p 3003:3003 \
   -e AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint \
   -e AZURE_OPENAI_VERSION=your_azure_openai_version \
 
-  -v ./MyRepos:/root/.adalflow \
+  -v ~/.adalflow:/root/.adalflow \
   ghcr.io/asyncfuncai/deepwiki-open:latest
 ```
 
-This command also mounts `./MyRepos` on your host to `/root/.adalflow` in the container. This path is used to store:
-- Cloned repositories (`./MyRepos/repos/`)
-- Their embeddings and indexes (`./MyRepos/databases/`)
-- Cached generated wiki content (`./MyRepos/wikicache/`)
+This command also mounts `~/.adalflow` on your host to `/root/.adalflow` in the container. This path is used to store:
+- Cloned repositories (`~/.adalflow/repos/`)
+- Their embeddings and indexes (`~/.adalflow/databases/`)
+- Cached generated wiki content (`~/.adalflow/wikicache/`)
 
 This ensures that your data persists even if the container is stopped or removed.
 
@@ -518,7 +485,7 @@ Or use the provided `docker-compose.yml` file:
 docker-compose up
 ```
 
-(The `docker-compose.yml` file is pre-configured to mount `./MyRepos` for data persistence, similar to the `docker run` command above.)
+(The `docker-compose.yml` file is pre-configured to mount `~/.adalflow` for data persistence, similar to the `docker run` command above.)
 
 #### Using a .env file with Docker
 
@@ -535,16 +502,16 @@ echo "AZURE_OPENAI_VERSION=your_azure_openai_version"  >>.env
 echo "OLLAMA_HOST=your_ollama_host" >> .env
 
 # Run the container with the .env file mounted
-docker run -p 8001:8001 -p 3003:3003 \
+docker run -p 8001:8001 -p 3000:3000 \
   -v $(pwd)/.env:/app/.env \
-  -v ./MyRepos:/root/.adalflow \
+  -v ~/.adalflow:/root/.adalflow \
   ghcr.io/asyncfuncai/deepwiki-open:latest
 ```
 
-This command also mounts `./MyRepos` on your host to `/root/.adalflow` in the container. This path is used to store:
-- Cloned repositories (`./MyRepos/repos/`)
-- Their embeddings and indexes (`./MyRepos/databases/`)
-- Cached generated wiki content (`./MyRepos/wikicache/`)
+This command also mounts `~/.adalflow` on your host to `/root/.adalflow` in the container. This path is used to store:
+- Cloned repositories (`~/.adalflow/repos/`)
+- Their embeddings and indexes (`~/.adalflow/databases/`)
+- Cached generated wiki content (`~/.adalflow/wikicache/`)
 
 This ensures that your data persists even if the container is stopped or removed.
 
@@ -561,7 +528,7 @@ cd deepwiki-open
 docker build -t deepwiki-open .
 
 # Run the container
-docker run -p 8001:8001 -p 3003:3003 \
+docker run -p 8001:8001 -p 3000:3000 \
   -e GOOGLE_API_KEY=your_google_api_key \
   -e OPENAI_API_KEY=your_openai_api_key \
   -e OPENROUTER_API_KEY=your_openrouter_api_key \

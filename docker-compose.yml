@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT:-8001}:${PORT:-8001}"  # API port
-      - "3000:3000"  # Next.js port
+      - "3003:3003"  # Next.js port
     env_file:
       - .env
     environment:
@@ -15,11 +15,11 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - LOG_FILE_PATH=${LOG_FILE_PATH:-api/logs/application.log}
     volumes:
-      - ~/.adalflow:/root/.adalflow      # Persist repository and embedding data
+      - ./MyRepos:/root/.adalflow      # Persist repository and embedding data
       - ./api/logs:/app/api/logs          # Persist log files across container restarts
     # Resource limits for docker-compose up (not Swarm mode)
-    mem_limit: 6g
-    mem_reservation: 2g
+    mem_limit: 12g
+    mem_reservation: 4g
     # Health check configuration
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8001}/health"]

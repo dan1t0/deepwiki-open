@@ -67,3 +67,15 @@ next-env.d.ts
 
 # ignore adding self-signed certs
 certs/
+
+# MyRepos data directory - keep structure but ignore content
+MyRepos/*
+!MyRepos/databases/
+!MyRepos/repos/
+!MyRepos/wikicache/
+MyRepos/databases/*
+!MyRepos/databases/.gitkeep
+MyRepos/repos/*
+!MyRepos/repos/.gitkeep
+MyRepos/wikicache/*
+!MyRepos/wikicache/.gitkeep
